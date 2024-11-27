@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 
 BASE_URL = "http://{host}:{port}/{base_endpoint}{endpoint}"
 BASE_ENDPOINT = ""
-HOST = "localhost"
+HOST = os.getenv("VIRTEX_API_HOST", "demo.virtex.co")
 PORT = 4000
 SIM_PORT = 4001
 
@@ -310,8 +310,6 @@ class Virtex:
 
 
 def init(host=None):
-    if host is None:
-        host = os.getenv("VIRTEX_API_HOST", "localhost")
     return Virtex(os.getenv("VIRTEX_API_KEY"), os.getenv("VIRTEX_API_SECRET"), host)
 
 
