@@ -36,8 +36,9 @@ def get(api_key, api_secret, host, port, base_endpoint, endpoint):
     try:
         return response.json()
     except:
-        log.info("%s - %s", response, response.text)
+        log.error("%s - %s", response, response.text)
         return None
+        raise
 
 
 def post(api_key, api_secret, host, port, base_endpoint, endpoint, json):
@@ -49,8 +50,9 @@ def post(api_key, api_secret, host, port, base_endpoint, endpoint, json):
     try:
         return response.json()
     except:
-        log.info("%s - %s", response, response.text)
+        log.error("%s - %s", response, response.text)
         return None
+        raise
 
 
 def patch(api_key, api_secret, host, port, base_endpoint, endpoint, json):
@@ -62,8 +64,9 @@ def patch(api_key, api_secret, host, port, base_endpoint, endpoint, json):
     try:
         return response.json()
     except:
-        log.info("%s - %s", response, response.text)
+        log.error("%s - %s", response, response.text)
         return None
+        raise
 
 
 def delete(api_key, api_secret, host, port, base_endpoint, endpoint, json):
@@ -75,8 +78,9 @@ def delete(api_key, api_secret, host, port, base_endpoint, endpoint, json):
     try:
         return response.json()
     except:
-        log.info("%s - %s", response, response.text)
+        log.error("%s - %s", response, response.text)
         return None
+        raise
 
 
 class Virtex:
@@ -197,14 +201,14 @@ class Virtex:
 
     def new_order(
         self,
-        msgType="D",
         side=None,
         symbol=None,
         quantity=None,
         price=None,
-        exDestination="binance",
-        target_strategy="DMA",
-        account=1,
+        ex_destination=None,
+        security_exchange=None,
+        target_strategy=None,
+        account=None,
         order=None,
     ):
         if order:
@@ -213,22 +217,28 @@ class Virtex:
         if side is None:
             raise TypeError("Missing Side")
 
-        if symbol is None:
-            raise TypeError("Missing Symbol")
-
         if quantity is None:
             raise TypeError("Missing Quantity")
+        
+        if symbol is None:
+            raise TypeError("Missing Symbol")
+        
+        if ex_destination is None and security_exchange is None:
+            raise TypeError("Missing ExDestination / SecurityExchange")
 
         if price is None:
             raise TypeError("Missing Price")
 
-        order = {"side": side, "symbol": symbol, "orderQty": quantity, "price": price}
-        if exDestination:
-            order["exDestination"] = exDestination
+        if account is None:
+            raise TypeError("Missing Account")
+
+        order = {"msgType": "D", "side": side, "symbol": symbol, "orderQty": quantity, "price": price, "account": account}
+        if ex_destination:
+            order["exDestination"] = ex_destination
+        if security_exchange:
+            order["securityExchange"] = security_exchange
         if target_strategy:
-            order["target_strategy"] = target_strategy
-        if account:
-            order["account"] = account
+            order["targetStrategy"] = target_strategy
 
         return self.post("orders", json=order)
 
@@ -237,16 +247,16 @@ class Virtex:
         symbol,
         quantity,
         price,
-        exDestination="binance",
-        target_strategy="DMA",
-        account=1,
+        ex_destination=None,
+        target_strategy=None,
+        account=None,
     ):
         return self.new_order(
             "BUY",
             symbol,
             quantity,
             price,
-            exDestination=exDestination,
+            ex_destination=ex_destination,
             target_strategy=target_strategy,
             account=account,
         )
@@ -256,16 +266,16 @@ class Virtex:
         symbol,
         quantity,
         price,
-        exDestination="binance",
-        target_strategy="DMA",
-        account=1,
+        ex_destination=None,
+        target_strategy=None,
+        account=None
     ):
         return self.new_order(
             "SELL",
             symbol,
             quantity,
             price,
-            exDestination=exDestination,
+            ex_destination=ex_destination,
             target_strategy=target_strategy,
             account=account,
         )

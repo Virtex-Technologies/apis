@@ -3,7 +3,7 @@ name = "virtex"
 version = "0.1.1"
 description = "Virtex API wrapper"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "pandas>=2.2.3",
     "python-dotenv>=1.0.1",
